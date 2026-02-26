@@ -3,7 +3,7 @@ Arquitectura distribuida basada en microservicios para scraping, procesamiento c
 
 ## Stack tecnológico
 - Java 21
-- Spring Boot 3
+- Spring Boot 4
 - Apache Kafka
 - PostgreSQL
 - Redis (opcional)
