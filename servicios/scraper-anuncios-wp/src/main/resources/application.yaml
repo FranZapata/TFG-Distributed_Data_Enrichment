@@ -1,3 +1,11 @@
+server:
+  port: 8081
+
 spring:
-  application:
-    name: scraper-anuncios-wp
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      acks: all
+      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
