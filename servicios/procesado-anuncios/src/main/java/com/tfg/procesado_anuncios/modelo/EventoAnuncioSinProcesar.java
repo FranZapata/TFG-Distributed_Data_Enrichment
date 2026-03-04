@@ -1,11 +1,10 @@
-package com.tfg.procesado_anuncios.model;
+package com.tfg.procesado_anuncios.modelo;
 
 import lombok.Data;
 
 @Data
-public class RawAd {
+public class EventoAnuncioSinProcesar {
     private String idExterno;
-    private String categoriaDetectada;
     private String titulo;
     private String descripcion;
     private Double precio;

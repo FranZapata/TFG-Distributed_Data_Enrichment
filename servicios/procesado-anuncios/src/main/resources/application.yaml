@@ -2,6 +2,19 @@ server:
   port: 8082
 
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tfgdb
+    username: tfguser
+    password: tfgpassword
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+      generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -11,4 +24,4 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
-        spring.json.value.default.type: com.tfg.procesado_anuncios.model.RawAd
+        spring.json.value.default.type: com.tfg.procesado_anuncios.modelo.EventoAnuncioSinProcesar
