@@ -25,3 +25,7 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
         spring.json.value.default.type: com.tfg.procesado_anuncios.modelo.EventoAnuncioSinProcesar
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
