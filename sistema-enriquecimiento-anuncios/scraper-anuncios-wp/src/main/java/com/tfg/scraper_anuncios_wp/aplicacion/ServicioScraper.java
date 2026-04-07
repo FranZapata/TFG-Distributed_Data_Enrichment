@@ -1,6 +1,8 @@
 package com.tfg.scraper_anuncios_wp.aplicacion;
 
 import com.tfg.anuncios.contratos.evento.AnuncioSinProcesarEvent;
+import com.tfg.scraper_anuncios_wp.infraestructura.cliente.ClienteWallapopScraper;
+import com.tfg.scraper_anuncios_wp.infraestructura.kafka.AnuncioSinProcesarProducer;
 import com.tfg.scraper_anuncios_wp.mapeador.ScrapedAnuncioAAnuncioSinprocesearEventMapeador;
 import com.tfg.scraper_anuncios_wp.modelo.dto.ScrapedAnuncioSinProcesarDto;
 import org.springframework.stereotype.Service;
@@ -11,8 +13,12 @@ import java.util.List;
 public class ServicioScraper {
 
     private final ScrapedAnuncioAAnuncioSinprocesearEventMapeador mapper;
+    private final ClienteWallapopScraper scraperClient;
+    private final AnuncioSinProcesarProducer producer;
 
-    public ServicioScraper() {
+    public ServicioScraper(ClienteWallapopScraper scraperClient, AnuncioSinProcesarProducer producer) {
+        this.scraperClient = scraperClient;
+        this.producer = producer;
         this.mapper = new ScrapedAnuncioAAnuncioSinprocesearEventMapeador();
     }
 
@@ -20,38 +26,24 @@ public class ServicioScraper {
 
         System.out.println("Iniciando scraping...");
 
-        // Obtener datos (mock de momento)
-        List<ScrapedAnuncioSinProcesarDto> anuncios = obtenerDatosMock();
+        // Obtener datos
+        List<ScrapedAnuncioSinProcesarDto> anuncios = scraperClient.scrape();
 
         // Procesar cada anuncio
         for (ScrapedAnuncioSinProcesarDto raw : anuncios) {
 
-            AnuncioSinProcesarEvent event = mapper.map(raw);
+            try {
+                AnuncioSinProcesarEvent event = mapper.map(raw);
+                producer.enviar(event);
+            } catch (Exception e){
+                System.out.println("Error procesando anuncio: " + raw.getExternalId());
+                System.out.println("ERROR: " + e.toString());
 
-            //Simular envío
-            System.out.println("Evento generado: " + event.getTitulo());
+            }
+
+
         }
 
         System.out.println("Scraping finalizado.");
-    }
-
-    private List<ScrapedAnuncioSinProcesarDto> obtenerDatosMock() {
-        ScrapedAnuncioSinProcesarDto ad1 = new ScrapedAnuncioSinProcesarDto();
-        ad1.setExternalId("1");
-        ad1.setTitulo("iPhone 13");
-        ad1.setDescripcion("En perfecto estado");
-        ad1.setPrecioTexto("600 €");
-        ad1.setUbicacionTexto("Madrid");
-        ad1.setUrl("https://wallapop.com/item/1");
-
-        ScrapedAnuncioSinProcesarDto ad2 = new ScrapedAnuncioSinProcesarDto();
-        ad2.setExternalId("2");
-        ad2.setTitulo("Yamaha MT-07");
-        ad2.setDescripcion("Moto como nueva");
-        ad2.setPrecioTexto("4500 €");
-        ad2.setUbicacionTexto("Valencia");
-        ad2.setUrl("https://wallapop.com/item/2");
-
-        return List.of(ad1, ad2);
     }
 }
