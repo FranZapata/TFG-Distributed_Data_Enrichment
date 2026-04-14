@@ -19,22 +19,22 @@ public class AnuncioSinProcesarEvent {
     private String eventId;
     private Instant eventTimestamp;
 
-    private String sourceMessageId;
-
-    private FuenteResumenDto fuente;
-
-    private String externalId;
+    private String idAnuncio;
     private String urlOrigen;
     private String titulo;
     private String descripcion;
+    private String ubicacionTextoOriginal;
 
     private PrecioDto precio;
-    private UbicacionDto ubicacion;
+
 
     private Instant fechaPublicacion;
-    private Instant fechaCaptura;
+    private String fechaCaptura;
 
     private EstadoAnuncio estado;
+
+    private Long idFuenteFk;
+    private Long idCategoriaFk;
 
     private JsonNode rawPayload;
 

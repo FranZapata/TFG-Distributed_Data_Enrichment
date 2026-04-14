@@ -15,7 +15,7 @@ public class AnuncioSinProcesarProducer {
     }
 
     public void enviar(AnuncioSinProcesarEvent event){
-        String key = event.getExternalId();
+        String key = event.getIdAnuncio();
         kafkaTemplate.send(TOPIC, key, event);
         System.out.println("Enviado a Kafka: " + event.getTitulo());
     }

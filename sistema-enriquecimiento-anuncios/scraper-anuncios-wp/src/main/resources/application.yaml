@@ -11,3 +11,25 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tfgdb
+    username: tfguser
+    password: tfgpassword
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+scraper:
+  offset-step: 120
+
+  delay-min-ms: 800
+  delay-max-ms: 2000
+
+  delay-entre-categorias-ms: 3000

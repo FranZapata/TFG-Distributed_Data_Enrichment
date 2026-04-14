@@ -4,38 +4,31 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.tfg.anuncios.contratos.enums.EstadoAnuncio;
 import com.tfg.anuncios.contratos.valueobject.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AnuncioProcesadoEvent {
 
-    private String eventId;
-    private Instant eventTimestamp;
+    private AnuncioSinProcesarEvent anuncioOriginal;
 
-    private FuenteResumenDto fuente;
+    private BigDecimal precioValor;
+    private String precioMoneda;
+    private String descripcionLimpia;
+    private Boolean esVigente;
 
-    private String externalId;
-    private String urlOrigen;
-    private String titulo;
-    private String descripcion;
+    private JsonNode resultadoExtraccion;
 
-    private PrecioDto precio;
-    private UbicacionDto ubicacion;
+    private BigDecimal confianzaGlobal;
+    private String modeloLlm;
+    private Instant fechaExtraccion;
 
-    private Instant fechaPublicacion;
-    private Instant fechaCaptura;
-
-    private EstadoAnuncio estado;
-
-    private JsonNode rawPayload;
-
-    private ResultadoExtraccionDto resultadoExtraccion;
-
-    private ProcesamientoMetadatoDto procesamiento;
-
+    private Long idPlantillaPrompt;
 }

@@ -16,9 +16,13 @@ public class ScrapedAnuncioSinProcesarDto {
     private String precioTexto;
     private String ubicacionTexto;
 
-    private String url;
+    private String urlOrigen;
 
     private String fechaPublicacionTexto;
+    private String fechaCaptura;
+
+    private Long idFuente;
+    private Long idCategoria;
 
     private String rawJson;
 

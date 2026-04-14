@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tfg.anuncios.contratos.enums.EstadoAnuncio;
 import com.tfg.anuncios.contratos.evento.AnuncioSinProcesarEvent;
-import com.tfg.anuncios.contratos.valueobject.FuenteResumenDto;
 import com.tfg.anuncios.contratos.valueobject.PrecioDto;
 import com.tfg.anuncios.contratos.valueobject.UbicacionDto;
 import com.tfg.scraper_anuncios_wp.modelo.dto.ScrapedAnuncioSinProcesarDto;
@@ -23,18 +22,10 @@ public class ScrapedAnuncioAAnuncioSinprocesearEventMapeador {
         // Metadata evento
         evento.setEventId(UUID.randomUUID().toString());
         evento.setEventTimestamp(Instant.now());
-        evento.setSourceMessageId(crudo.getExternalId());
-
-        // Fuente
-        FuenteResumenDto fuente = new FuenteResumenDto();
-        fuente.setNombre("wallapop");
-        fuente.setTipo("web");
-        fuente.setUrlBase("https://es.wallapop.com");
-        evento.setFuente(fuente);
 
         // Datos principales
-        evento.setExternalId(crudo.getExternalId());
-        evento.setUrlOrigen(crudo.getUrl());
+        evento.setIdAnuncio(crudo.getExternalId());
+        evento.setUrlOrigen(crudo.getUrlOrigen());
         evento.setTitulo(crudo.getTitulo());
         evento.setDescripcion(crudo.getDescripcion());
 
@@ -42,11 +33,11 @@ public class ScrapedAnuncioAAnuncioSinprocesearEventMapeador {
         evento.setPrecio(parsePrecio(crudo.getPrecioTexto()));
 
         // Ubicación
-        evento.setUbicacion(parseUbicacion(crudo.getUbicacionTexto()));
+        evento.setUbicacionTextoOriginal(crudo.getUbicacionTexto());
 
         // Fechas
         evento.setFechaPublicacion(parseFecha(crudo.getFechaPublicacionTexto()));
-        evento.setFechaCaptura(Instant.now());
+        evento.setFechaCaptura(crudo.getFechaCaptura());
 
         // Estado
         evento.setEstado(EstadoAnuncio.CAPTURADO);
@@ -54,11 +45,15 @@ public class ScrapedAnuncioAAnuncioSinprocesearEventMapeador {
         // Raw payload
         evento.setRawPayload(parseRawPayload(crudo));
 
+        // FK
+        evento.setIdFuenteFk(crudo.getIdFuente());
+        evento.setIdCategoriaFk(crudo.getIdCategoria());
+
         return evento;
     }
 
     // =========================
-    // Helpers
+    // Utils
     // =========================
 
     private PrecioDto parsePrecio(String precioTexto) {

@@ -11,6 +11,7 @@
     <modules>
         <module>anuncios-contratos</module>
         <module>scraper-anuncios-wp</module>
+        <module>procesado-anuncios</module>
     </modules>
 
     <properties>
