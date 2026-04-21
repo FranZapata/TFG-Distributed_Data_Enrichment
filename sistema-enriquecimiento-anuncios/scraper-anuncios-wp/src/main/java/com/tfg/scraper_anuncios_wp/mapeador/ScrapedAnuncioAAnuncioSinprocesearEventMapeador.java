@@ -37,7 +37,7 @@ public class ScrapedAnuncioAAnuncioSinprocesearEventMapeador {
 
         // Fechas
         evento.setFechaPublicacion(parseFecha(crudo.getFechaPublicacionTexto()));
-        evento.setFechaCaptura(crudo.getFechaCaptura());
+        evento.setFechaCaptura(parseFecha(crudo.getFechaCaptura()));
 
         // Estado
         evento.setEstado(EstadoAnuncio.CAPTURADO);

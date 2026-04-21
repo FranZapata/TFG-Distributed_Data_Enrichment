@@ -23,13 +23,16 @@ public class AnuncioSinProcesarEvent {
     private String urlOrigen;
     private String titulo;
     private String descripcion;
+
     private String ubicacionTextoOriginal;
+    private Long ubicacionLatitud;
+    private Long ubicacionLongitud;
 
     private PrecioDto precio;
 
 
     private Instant fechaPublicacion;
-    private String fechaCaptura;
+    private Instant fechaCaptura;
 
     private EstadoAnuncio estado;
 
