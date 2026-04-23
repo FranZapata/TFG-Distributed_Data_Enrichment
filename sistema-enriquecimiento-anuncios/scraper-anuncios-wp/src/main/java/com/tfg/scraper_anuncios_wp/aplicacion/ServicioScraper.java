@@ -45,6 +45,6 @@ public class ServicioScraper {
 
         }
 
-        System.out.println("Scraping finalizado.");
+        System.out.println("Scraping " + categoria.getNombre() + " finalizado.");
     }
 }

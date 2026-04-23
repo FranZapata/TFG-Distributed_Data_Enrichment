@@ -1,6 +1,8 @@
 package com.tfg.scraper_anuncios_wp.infraestructura.cliente;
 
 import com.microsoft.playwright.*;
+import com.tfg.scraper_anuncios_wp.dominio.factory.DetalleScraperExtensionFactory;
+import com.tfg.scraper_anuncios_wp.dominio.scraper.DetalleScraperExtension;
 import com.tfg.scraper_anuncios_wp.modelo.dto.CategoriaDto;
 import com.tfg.scraper_anuncios_wp.modelo.dto.ScrapedAnuncioSinProcesarDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,12 @@ public class ClienteWallapopScraper {
     @Value("${scraper.offset-step}")
     private int offsetStep;
 
+    private final DetalleScraperExtensionFactory extensionFactory;
+
+    public ClienteWallapopScraper(DetalleScraperExtensionFactory extensionFactory) {
+        this.extensionFactory = extensionFactory;
+    }
+
     public List<ScrapedAnuncioSinProcesarDto> scrape(CategoriaDto categoria){
         List<ScrapedAnuncioSinProcesarDto> resultados = new ArrayList<>();
 
@@ -31,7 +39,7 @@ public class ClienteWallapopScraper {
             // Abrir navegador con URL de la categoría correspondiente
             page.navigate(categoria.getUrlBase() + "/search?category_id=" + categoria.getCodigoInterno() + "&order_by=newest");
 
-            // esperar a que cargue contenido
+            // Esperar a que cargue contenido
             page.waitForTimeout(5000);
 
             // Aceptar cookies si aparecen
@@ -42,7 +50,7 @@ public class ClienteWallapopScraper {
 
             if (boton.isVisible()) {
                 boton.click();
-                page.waitForTimeout(2000);
+                page.waitForTimeout(1000);
             }
 
             // Variables bucle
@@ -56,7 +64,7 @@ public class ClienteWallapopScraper {
 
                 // Bucle que hace scroll hasta cargar nuevos anuncios
                 while(itemsProcesados >= total){
-                    // scroll humano
+                    // Scroll humano
                     page.mouse().wheel(0, randomBetween(1000, 2500));
                     page.waitForTimeout(randomBetween(800, 2000));
 
@@ -69,7 +77,7 @@ public class ClienteWallapopScraper {
 
                     Locator item = items.nth(i);
 
-                    //Construir URL
+                    //Construir URL del anuncio
                     String url = item.getAttribute("href");
                     if (url != null && !url.startsWith("http")){
                         url = categoria.getUrlBase() + url;
@@ -94,14 +102,17 @@ public class ClienteWallapopScraper {
                     dto.setIdCategoria(categoria.getIdCategoria());
                     dto.setIdFuente(categoria.getIdFuente());
 
-
-                    // Obtener Descripción y ubicación
-                    enriquecerConDetalle(browser, dto);
-
-                    // De momento a null
+                    // Todo implementar obtencion de fechapublicacion
                     dto.setFechaPublicacionTexto(null);
 
-                    resultados.add(dto);
+                    // Obtener Descripción y ubicación
+                    enriquecerConDetalle(browser, dto, categoria);
+
+                    // Validación para anadir anuncios que hayamos podido obtener la descripción
+                    if (dto.getDescripcion() != null && !dto.getDescripcion().isEmpty()){
+                        resultados.add(dto);
+                    }
+
                 }
 
                 itemsProcesados = total;
@@ -113,6 +124,8 @@ public class ClienteWallapopScraper {
             }
 
             browser.close();
+        }catch (Exception e){
+            System.out.println("Error al recorrer el bucle de anuncios: \n" + e.toString());
         }
 
         return resultados;
@@ -151,28 +164,39 @@ public class ClienteWallapopScraper {
         return null;
     }
 
-    private void enriquecerConDetalle(Browser buscador, ScrapedAnuncioSinProcesarDto dto){
+    private void enriquecerConDetalle(Browser buscador, ScrapedAnuncioSinProcesarDto dto, CategoriaDto categoria){
+        Page detallePage = buscador.newPage();
+
         try {
-            Page detallePage = buscador.newPage();
             detallePage.navigate(dto.getUrlOrigen());
-            detallePage.waitForTimeout(1500);
+            detallePage.waitForTimeout(2000);
             aceptarCoockies(detallePage);
 
             String descripcion = obtenerTexto(
-                    detallePage.locator("section[class*=\"ItemDetailTwoColumns__description\"]")
+                    detallePage.locator("[class*=\"Description\"]")
             );
+
+            String caracteristicas = obtenerTexto(detallePage.locator("[class*=\"Characteristics\"]"));
+            descripcion = dto.getTitulo() + "\n" + caracteristicas + "\n" + descripcion;
 
             String ubicacion = obtenerTexto(
                     detallePage.locator("a[class*=\"item-detail-location_ItemDetailLocation\"]")
             );
 
+            // TODO implementar latitud y longitud
+
             dto.setDescripcion(descripcion);
             dto.setUbicacionTexto(ubicacion);
+
+            //Seccion extra para ciertas categorias
+            DetalleScraperExtension extension = extensionFactory.get(categoria.getNombre());
+            extension.ampliarDescripcion(detallePage, dto);
 
             detallePage.close();
 
         } catch (Exception e) {
             System.out.println("Error al obtener descripción y ubicación: " + e.toString());
+            detallePage.close();
         }
     }
 

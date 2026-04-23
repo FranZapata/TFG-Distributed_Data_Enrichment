@@ -27,7 +27,7 @@ spring:
 
 
 scraper:
-  offset-step: 120
+  offset-step: 60 #450
 
   delay-min-ms: 800
   delay-max-ms: 2000

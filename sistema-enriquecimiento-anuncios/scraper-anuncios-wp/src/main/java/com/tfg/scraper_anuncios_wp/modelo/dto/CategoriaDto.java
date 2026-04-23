@@ -14,4 +14,5 @@ public class CategoriaDto {
     private String codigoInterno;
     private Long idFuente;
     private String urlBase;
+    private String nombre;
 }

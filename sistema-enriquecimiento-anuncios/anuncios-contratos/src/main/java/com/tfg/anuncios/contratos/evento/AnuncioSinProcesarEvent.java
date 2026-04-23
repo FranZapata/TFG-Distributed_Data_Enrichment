@@ -2,9 +2,7 @@ package com.tfg.anuncios.contratos.evento;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.tfg.anuncios.contratos.enums.EstadoAnuncio;
-import com.tfg.anuncios.contratos.valueobject.FuenteResumenDto;
 import com.tfg.anuncios.contratos.valueobject.PrecioDto;
-import com.tfg.anuncios.contratos.valueobject.UbicacionDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

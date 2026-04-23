@@ -19,7 +19,8 @@ public class ServicioCategoria {
                         c.getIdCategoria(),
                         c.getCodigoInterno(),
                         c.getFuente().getIdFuente(),
-                        c.getFuente().getUrlBase()
+                        c.getFuente().getUrlBase(),
+                        c.getNombre()
                 ))
                 .toList();
     }
