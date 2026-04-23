@@ -15,6 +15,8 @@ public class ScrapedAnuncioSinProcesarDto {
 
     private String precioTexto;
     private String ubicacionTexto;
+    private Long ubicacionLatitud;
+    private Long ubicacionLongitud;
 
     private String urlOrigen;
 

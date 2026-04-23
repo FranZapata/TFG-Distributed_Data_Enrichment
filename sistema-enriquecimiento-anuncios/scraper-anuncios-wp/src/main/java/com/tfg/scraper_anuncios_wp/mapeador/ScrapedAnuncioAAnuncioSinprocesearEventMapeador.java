@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tfg.anuncios.contratos.enums.EstadoAnuncio;
 import com.tfg.anuncios.contratos.evento.AnuncioSinProcesarEvent;
 import com.tfg.anuncios.contratos.valueobject.PrecioDto;
-import com.tfg.anuncios.contratos.valueobject.UbicacionDto;
 import com.tfg.scraper_anuncios_wp.modelo.dto.ScrapedAnuncioSinProcesarDto;
 
 import java.math.BigDecimal;
@@ -34,6 +33,8 @@ public class ScrapedAnuncioAAnuncioSinprocesearEventMapeador {
 
         // Ubicación
         evento.setUbicacionTextoOriginal(crudo.getUbicacionTexto());
+        evento.setUbicacionLatitud(crudo.getUbicacionLatitud());
+        evento.setUbicacionLongitud(crudo.getUbicacionLongitud());
 
         // Fechas
         evento.setFechaPublicacion(parseFecha(crudo.getFechaPublicacionTexto()));
@@ -74,18 +75,6 @@ public class ScrapedAnuncioAAnuncioSinprocesearEventMapeador {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    private UbicacionDto parseUbicacion(String ubicacionTexto) {
-
-        UbicacionDto ubicacion = new UbicacionDto();
-        ubicacion.setTextoOriginal(ubicacionTexto);
-
-        // de momento simple (pendiente de mejorar)
-        ubicacion.setCiudad(ubicacionTexto);
-        ubicacion.setPais("España");
-
-        return ubicacion;
     }
 
     private Instant parseFecha(String fechaTexto) {
