@@ -2,6 +2,7 @@ package com.tfg.procesado_anuncios.infraestructura.Cliente;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tfg.procesado_anuncios.infraestructura.excepciones.ExcepcionLlmParse;
 import com.tfg.procesado_anuncios.modelo.dto.PeticionLlmDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,35 +22,76 @@ public class LlmCliente {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
+    @Value("${ollama.maxIntentos}")
+    private int maxIntentos;
+
     public JsonNode generar(String prompt, String url, String modelo){
-        try {
-            PeticionLlmDto peticion = PeticionLlmDto.builder()
-                    .model(modelo)
-                    .prompt(prompt)
-                    .stream(false)
-                    .build();
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        int intentos = 0;
+        String ultimaRespuesta = null;
 
-            HttpEntity<PeticionLlmDto> entity = new HttpEntity<>(peticion, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-
-            JsonNode resultado;
+        while (intentos<maxIntentos){
             try {
-                JsonNode json = objectMapper.readTree(response.getBody());
-                String jsonInterno = json.get("response").asText();
-                resultado = objectMapper.readTree(jsonInterno);
-            } catch (Exception e) {
-                throw new RuntimeException("Error parseando LLM",e);
+                String response = llamarLLM(prompt,url,modelo);
+                ultimaRespuesta = response;
+
+                return parsearRespuesta(response);
+
+            } catch (ExcepcionLlmParse e){
+                intentos++;
+                ultimaRespuesta = e.getRespuestaLlm();
+
+                log.warn("Error en intento {} de llamada LLM", intentos, e);
+
+                if (intentos >= maxIntentos) {
+                    throw e;
+                }
+            } catch (Exception e){
+                intentos++;
+
+                log.warn("Error en intento {} de llamada LLM", intentos, e);
+
+                if (intentos >= maxIntentos) {
+                    log.error("Fallo definitivo tras reintentos");
+                    throw new RuntimeException("LLM fallo tras reintentos", e);
+                }
+            }
+        }
+        throw new RuntimeException("Error inesperado LLM");
+    }
+
+    private String llamarLLM(String prompt, String url, String modelo) {
+        // Preparamos petición
+        PeticionLlmDto peticion = PeticionLlmDto.builder()
+                .model(modelo)
+                .prompt(prompt)
+                .stream(false)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<PeticionLlmDto> entity = new HttpEntity<>(peticion, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+        return response.getBody();
+    }
+
+    private JsonNode parsearRespuesta(String responseBody) {
+        try {
+            JsonNode json = objectMapper.readTree(responseBody);
+
+            if (!json.has("response")) {
+                throw new ExcepcionLlmParse("Respuesta sin campo response",
+                        responseBody,
+                        null
+                );
             }
 
-            log.info("Respuesta LLM recibida");
-            return resultado;
+            String jsonInterno = json.get("response").asText();
+            return objectMapper.readTree(jsonInterno);
 
-        } catch (Exception e){
-            log.error("Error llamando al LLM", e);
-            throw new RuntimeException("Error en llamada al LLM", e);
+        } catch (Exception e) {
+            throw new ExcepcionLlmParse("Error parseando JSON del LLM",responseBody,e);
         }
     }
 }
