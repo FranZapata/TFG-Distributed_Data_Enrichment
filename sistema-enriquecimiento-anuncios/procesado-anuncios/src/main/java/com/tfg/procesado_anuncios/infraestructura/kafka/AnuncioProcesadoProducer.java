@@ -11,6 +11,7 @@ public class AnuncioProcesadoProducer {
     private final KafkaTemplate<String, AnuncioProcesadoEvent> kafkaTemplate;
 
     public void enviar(AnuncioProcesadoEvent event){
+
         kafkaTemplate.send(
                 "anuncio_procesado",
                 event.getAnuncioOriginal().getIdAnuncio(),
