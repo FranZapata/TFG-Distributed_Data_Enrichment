@@ -25,4 +25,21 @@ public class AnuncioSinProcesarEntityMapper {
                 .idCategoriaFk(original.getIdCategoriaFk())
                 .build();
     }
+
+    public AnuncioSinProcesarEntity map(AnuncioSinProcesarEvent evento){
+
+        return AnuncioSinProcesarEntity.builder()
+                .idAnuncio(evento.getIdAnuncio())
+                .urlOrigen(evento.getUrlOrigen())
+                .titulo(evento.getTitulo())
+                .descripcion(evento.getDescripcion())
+                .ubicacionTextoOriginal(evento.getUbicacionTextoOriginal())
+                .ubicacionLatitud(evento.getUbicacionLatitud())
+                .ubicacionLongitud(evento.getUbicacionLongitud())
+                .fechaPublicacion(evento.getFechaPublicacion())
+                .fechaCaptura(evento.getFechaCaptura())
+                .idFuenteFk(evento.getIdFuenteFk())
+                .idCategoriaFk(evento.getIdCategoriaFk())
+                .build();
+    }
 }

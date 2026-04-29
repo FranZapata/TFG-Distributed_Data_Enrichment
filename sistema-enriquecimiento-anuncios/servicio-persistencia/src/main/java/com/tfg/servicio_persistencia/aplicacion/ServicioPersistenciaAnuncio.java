@@ -1,11 +1,8 @@
 package com.tfg.servicio_persistencia.aplicacion;
 
-import com.tfg.anuncios.contratos.evento.AnuncioProcesadoEvent;
-import com.tfg.servicio_persistencia.infraestructura.persitencia.entidad.AnuncioProcesadoEntity;
+import com.tfg.anuncios.contratos.evento.AnuncioSinProcesarEvent;
 import com.tfg.servicio_persistencia.infraestructura.persitencia.entidad.AnuncioSinProcesarEntity;
-import com.tfg.servicio_persistencia.infraestructura.persitencia.repositorio.AnuncioProcesadoRepository;
 import com.tfg.servicio_persistencia.infraestructura.persitencia.repositorio.AnuncioSinProcesarRepository;
-import com.tfg.servicio_persistencia.mapeador.AnuncioProcesadoEntityMapper;
 import com.tfg.servicio_persistencia.mapeador.AnuncioSinProcesarEntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,59 +12,39 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class ServicioPersistenciaAnuncio {
-
-    private final AnuncioProcesadoRepository anuncioProcesadoRepository;
     private final AnuncioSinProcesarRepository anuncioSinProcesarRepository;
 
-    private final AnuncioProcesadoEntityMapper anuncioProcesadoEntityMapper;
     private final AnuncioSinProcesarEntityMapper anuncioSinProcesarEntityMapper;
 
-    public void procesar(AnuncioProcesadoEvent evento){
-        log.info("Procesando anuncios para persistencia: {}", evento.getAnuncioOriginal().getIdAnuncio());
-
+    public AnuncioSinProcesarEntity insrtarOActualizarAnuncio(AnuncioSinProcesarEvent evento){
         try {
             // 1️⃣ Insertar o recuperar anuncio
-            AnuncioSinProcesarEntity anuncioSinProcesar = anuncioSinProcesarRepository
-                    .findById(evento.getAnuncioOriginal().getIdAnuncio())
+            return anuncioSinProcesarRepository
+                    .findById(evento.getIdAnuncio())
                     .map(existing -> actualizarAnuncio(existing, evento))
                     .orElseGet(() -> crearAnuncio(evento));
 
-            AnuncioProcesadoEntity anuncioProcesadoEntity = anuncioProcesadoEntityMapper.map(evento);
-            anuncioProcesadoEntity.setAnuncio(anuncioSinProcesar);
-            anuncioProcesadoRepository.save(anuncioProcesadoEntity);
-
-            log.info("Anuncio persistido correctamente: {}",
-                    evento.getAnuncioOriginal().getIdAnuncio());
-        }catch (Exception e) {
-            log.error("Error al persistir anuncio: {}",
-                    evento.getAnuncioOriginal().getIdAnuncio(), e);
-
-            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-
-
-
     }
 
-    private AnuncioSinProcesarEntity crearAnuncio(AnuncioProcesadoEvent event) {
+    private AnuncioSinProcesarEntity crearAnuncio(AnuncioSinProcesarEvent evento) {
 
-        AnuncioSinProcesarEntity nuevo = anuncioSinProcesarEntityMapper.map(event);
+        AnuncioSinProcesarEntity nuevo = anuncioSinProcesarEntityMapper.map(evento);
         return anuncioSinProcesarRepository.save(nuevo);
     }
 
-    private AnuncioSinProcesarEntity actualizarAnuncio(AnuncioSinProcesarEntity existing, AnuncioProcesadoEvent event) {
+    private AnuncioSinProcesarEntity actualizarAnuncio(AnuncioSinProcesarEntity existing, AnuncioSinProcesarEvent evento) {
 
-        var original = event.getAnuncioOriginal();
-
-        existing.setUrlOrigen(original.getUrlOrigen());
-        existing.setTitulo(original.getTitulo());
-        existing.setDescripcion(original.getDescripcion());
-        existing.setUbicacionTextoOriginal(original.getUbicacionTextoOriginal());
-        existing.setFechaPublicacion(original.getFechaPublicacion());
-        existing.setFechaCaptura(original.getFechaCaptura());
-        existing.setIdFuenteFk(original.getIdFuenteFk());
-        existing.setIdCategoriaFk(original.getIdCategoriaFk());
+        existing.setUrlOrigen(evento.getUrlOrigen());
+        existing.setTitulo(evento.getTitulo());
+        existing.setDescripcion(evento.getDescripcion());
+        existing.setUbicacionTextoOriginal(evento.getUbicacionTextoOriginal());
+        existing.setFechaPublicacion(evento.getFechaPublicacion());
+        existing.setFechaCaptura(evento.getFechaCaptura());
+        existing.setIdFuenteFk(evento.getIdFuenteFk());
+        existing.setIdCategoriaFk(evento.getIdCategoriaFk());
 
         return anuncioSinProcesarRepository.save(existing);
     }
