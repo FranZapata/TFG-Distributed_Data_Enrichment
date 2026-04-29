@@ -1,4 +1,4 @@
-package com.tfg.procesado_anuncios.config;
+package com.tfg.servicio_persistencia.config;
 
 import com.tfg.anuncios.contratos.evento.AnuncioSinProcesarEvent;
 import org.springframework.context.annotation.Bean;
@@ -11,14 +11,13 @@ import org.springframework.kafka.listener.ContainerProperties;
 public class KafkaConsumerConfig {
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, AnuncioSinProcesarEvent> kafkaListenerContainerFactory(
-            ConsumerFactory<String, AnuncioSinProcesarEvent> consumerFactory) {
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
+            ConsumerFactory<String, Object> consumerFactory) {
 
-        ConcurrentKafkaListenerContainerFactory<String, AnuncioSinProcesarEvent> factory =
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(consumerFactory);
-
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
 
         return factory;

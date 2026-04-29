@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -35,7 +37,7 @@ public class LlmCliente {
                 String response = llamarLLM(prompt,url,modelo);
                 ultimaRespuesta = response;
 
-                return parsearRespuesta(response);
+                return parsearRespuesta(response, intentos);
 
             } catch (ExcepcionLlmParse e){
                 intentos++;
@@ -76,13 +78,15 @@ public class LlmCliente {
         return response.getBody();
     }
 
-    private JsonNode parsearRespuesta(String responseBody) {
+    private JsonNode parsearRespuesta(String responseBody, int intento) {
         try {
             JsonNode json = objectMapper.readTree(responseBody);
 
             if (!json.has("response")) {
                 throw new ExcepcionLlmParse("Respuesta sin campo response",
                         responseBody,
+                        Instant.now(),
+                        intento,
                         null
                 );
             }
@@ -91,7 +95,11 @@ public class LlmCliente {
             return objectMapper.readTree(jsonInterno);
 
         } catch (Exception e) {
-            throw new ExcepcionLlmParse("Error parseando JSON del LLM",responseBody,e);
+            throw new ExcepcionLlmParse("Error parseando JSON del LLM",
+                    responseBody,
+                    Instant.now(),
+                    intento,
+                    e);
         }
     }
 }

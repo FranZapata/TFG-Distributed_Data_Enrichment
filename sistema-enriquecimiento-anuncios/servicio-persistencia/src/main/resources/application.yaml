@@ -4,15 +4,15 @@ server:
 spring:
   kafka:
     bootstrap-servers: localhost:9092
+    listener:
+      concurrency: 3
     consumer:
-      group-id: persistencia-anuncios-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
       properties:
-        spring.json.use.type.headers: false
-        spring.json.value.default.type: com.tfg.anuncios.contratos.evento.AnuncioProcesadoEvent
+        spring.json.use.type.headers: true
         spring.json.trusted.packages: "*"
 
   datasource:

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,4 +18,6 @@ public class AnuncioFalloLlmEvent {
     private String error;
     private String modelo;
     private Long idPlantillaPrompt;
+    private Instant fecha;
+    private int intentos;
 }

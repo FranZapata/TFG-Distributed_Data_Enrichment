@@ -27,8 +27,10 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
         spring.json.value.default.type: com.tfg.anuncios.contratos.evento.AnuncioSinProcesarEvent
-        max.pol.interval.ms: 300000 # 5 min de espera antes de que kafka expulse el servicio por inactividad
+        max.poll.interval.ms: 300000 # 5 min de espera antes de que kafka expulse el servicio por inactividad
     producer:
+      properties:
+        spring.json.add.type.headers: true
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
