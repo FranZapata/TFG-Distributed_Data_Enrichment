@@ -62,7 +62,7 @@ public class ScrapedAnuncioAAnuncioSinprocesearEventMapeador {
             if (precioTexto == null) return null;
 
             String limpio = precioTexto.replaceAll("[^0-9,\\.]", "")
-                    .replace(",", ".");
+                    .replace(".", "").replace(",","");
 
             BigDecimal valor = new BigDecimal(limpio);
 
