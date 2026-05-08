@@ -35,7 +35,7 @@ public class PlanificadorScraping {
     }
 
     private long calcularDuracion() {
-        int base = 1 * 60; // minutos
+        int base = 7 * 60; // minutos
         int variacion = randomEntre(-10, 10);
 
         return (base + variacion) * 60_000L; // segundos

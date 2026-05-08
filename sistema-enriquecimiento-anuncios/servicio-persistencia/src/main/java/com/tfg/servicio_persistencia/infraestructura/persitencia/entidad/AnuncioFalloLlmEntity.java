@@ -19,7 +19,9 @@ public class AnuncioFalloLlmEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idAnuncioFalloLlm;
 
+    @Column(columnDefinition = "TEXT")
     private String respuestaCruda;
+
     private String error;
     private String modelo;
     private Instant fechaIntento;

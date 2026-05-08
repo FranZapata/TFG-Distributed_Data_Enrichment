@@ -4,7 +4,7 @@ import com.tfg.anuncios.contratos.evento.AnuncioFalloLlmEvent;
 import com.tfg.servicio_persistencia.infraestructura.persitencia.entidad.AnuncioFalloLlmEntity;
 import com.tfg.servicio_persistencia.infraestructura.persitencia.entidad.AnuncioSinProcesarEntity;
 import com.tfg.servicio_persistencia.infraestructura.persitencia.repositorio.AnuncioFalloLlmRepository;
-import com.tfg.servicio_persistencia.mapeador.AnuncioFalloLlmMapper;
+import com.tfg.servicio_persistencia.mapeador.AnuncioFalloLlmEntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class ServicioPersistenciaAnuncioFallido {
 
     private final AnuncioFalloLlmRepository anuncioFalloLlmRepository;
-    private final AnuncioFalloLlmMapper anuncioFalloLlmMapper;
+    private final AnuncioFalloLlmEntityMapper anuncioFalloLlmMapper;
     private final ServicioPersistenciaAnuncio servicioPersistenciaAnuncio;
 
     public void procesar(AnuncioFalloLlmEvent evento){

@@ -18,7 +18,7 @@ public class ServicioPersistenciaAnuncio {
 
     public AnuncioSinProcesarEntity insrtarOActualizarAnuncio(AnuncioSinProcesarEvent evento){
         try {
-            // 1️⃣ Insertar o recuperar anuncio
+            // Insertar o recuperar anuncio
             return anuncioSinProcesarRepository
                     .findById(evento.getIdAnuncio())
                     .map(existing -> actualizarAnuncio(existing, evento))

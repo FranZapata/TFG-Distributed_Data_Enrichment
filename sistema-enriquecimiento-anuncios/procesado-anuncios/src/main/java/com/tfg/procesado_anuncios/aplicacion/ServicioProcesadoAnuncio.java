@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.tfg.anuncios.contratos.evento.AnuncioFalloLlmEvent;
 import com.tfg.anuncios.contratos.evento.AnuncioProcesadoEvent;
 import com.tfg.anuncios.contratos.evento.AnuncioSinProcesarEvent;
-import com.tfg.procesado_anuncios.infraestructura.Cliente.LlmCliente;
+import com.tfg.procesado_anuncios.infraestructura.cliente.LlmCliente;
 import com.tfg.procesado_anuncios.infraestructura.excepciones.ExcepcionLlmParse;
 import com.tfg.procesado_anuncios.infraestructura.kafka.AnuncioFalloLlmProducer;
 import com.tfg.procesado_anuncios.infraestructura.kafka.AnuncioProcesadoProducer;

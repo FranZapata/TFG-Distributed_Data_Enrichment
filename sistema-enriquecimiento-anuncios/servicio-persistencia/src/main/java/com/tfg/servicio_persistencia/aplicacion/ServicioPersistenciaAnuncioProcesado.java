@@ -27,6 +27,7 @@ public class ServicioPersistenciaAnuncioProcesado {
 
             AnuncioProcesadoEntity anuncioProcesadoEntity = anuncioProcesadoEntityMapper.map(evento);
             anuncioProcesadoEntity.setAnuncio(anuncioSinProcesar);
+            anuncioProcesadoRepository.marcarNoVigentes(anuncioProcesadoEntity.getAnuncio().getIdAnuncio());
             anuncioProcesadoRepository.save(anuncioProcesadoEntity);
 
             log.info("Anuncio persistido correctamente: {}",
