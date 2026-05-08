@@ -5,7 +5,7 @@ import com.tfg.servicio_persistencia.infraestructura.persitencia.entidad.Anuncio
 import org.springframework.stereotype.Component;
 
 @Component
-public class AnuncioFalloLlmMapper {
+public class AnuncioFalloLlmEntityMapper {
     public AnuncioFalloLlmEntity map(AnuncioFalloLlmEvent evento){
         return AnuncioFalloLlmEntity.builder()
                 .respuestaCruda(evento.getRespuestaCruda())

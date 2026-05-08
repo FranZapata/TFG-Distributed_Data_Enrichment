@@ -1,4 +1,4 @@
-package com.tfg.procesado_anuncios.infraestructura.Cliente;
+package com.tfg.procesado_anuncios.infraestructura.cliente;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
