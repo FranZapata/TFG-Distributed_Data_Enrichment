@@ -13,6 +13,7 @@
         <module>scraper-anuncios-wp</module>
         <module>procesado-anuncios</module>
         <module>servicio-persistencia</module>
+        <module>servicio-api</module>
     </modules>
 
     <properties>
