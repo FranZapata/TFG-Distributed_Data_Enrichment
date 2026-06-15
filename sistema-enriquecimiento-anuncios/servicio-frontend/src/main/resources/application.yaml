@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Servicio-frontend
+vaadin:
+  launch-browser: true
